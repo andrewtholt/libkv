@@ -1,4 +1,4 @@
-CC = gcc
+CC = gcc -g
 CFLAGS = -Wall -Wextra -std=c99 -g -O2 -fPIC
 
 # Shared library definitions

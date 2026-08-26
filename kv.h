@@ -17,5 +17,8 @@ StringStore* create_store(void);
 void kv_set(StringStore *store, const char *key, const char *value);
 const char* kv_get(StringStore *store, const char *key);
 void free_store(StringStore *store);
+void kv_display(StringStore *store);
+int kv_dump(StringStore *store, const char *filename);
+int kv_load(StringStore *store, const char *filename);
 
 #endif

@@ -2,3 +2,4 @@ kv.o
 libkv.so
 test_store
 *.a
+cscope.out

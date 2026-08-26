@@ -62,6 +62,73 @@ const char* kv_get(StringStore *store, const char *key) {
     return NULL;
 }
 
+void kv_display(StringStore *store) {
+    if (!store) return;
+
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        HashNode *node = store->buckets[i];
+        while (node != NULL) {
+            printf("%s = %s\n", node->key, node->value);
+            node = node->next;
+        }
+    }
+}
+
+
+int kv_dump(StringStore *store, const char *filename) {
+    if (!store || !filename) return -1;
+
+    FILE *fp = fopen(filename, "w");
+    if (!fp) {
+        fprintf(stderr, "Failed to open '%s' for writing\n", filename);
+        return -1;
+    }
+
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        HashNode *node = store->buckets[i];
+        while (node != NULL) {
+            fprintf(fp, "%s:%s\n", node->key, node->value);
+            node = node->next;
+        }
+    }
+
+    fclose(fp);
+    return 0;
+}
+
+int kv_load(StringStore *store, const char *filename) {
+    if (!store || !filename) return -1;
+
+    FILE *fp = fopen(filename, "r");
+    if (!fp) {
+        fprintf(stderr, "Failed to open '%s' for reading\n", filename);
+        return -1;
+    }
+
+    char *line = NULL;
+    size_t cap = 0;
+    ssize_t len;
+
+    while ((len = getline(&line, &cap, fp)) != -1) {
+        if (len > 0 && line[len - 1] == '\n') {
+            line[len - 1] = '\0';
+        }
+        if (line[0] == '\0') continue;
+
+        char *sep = strchr(line, ':');
+        if (!sep) continue; // malformed line, skip
+
+        *sep = '\0';
+        const char *key = line;
+        const char *value = sep + 1;
+        kv_set(store, key, value);
+    }
+
+    free(line);
+    fclose(fp);
+    return 0;
+}
+
 void free_store(StringStore *store) {
     if (!store) return;
     for (int i = 0; i < TABLE_SIZE; i++) {
