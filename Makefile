@@ -7,6 +7,8 @@ SRC = kv.c
 OBJ = kv.o
 TARGET = test_store
 
+PREFIX ?= /usr/local
+
 all: $(TARGET)
 
 # Compile library source into position-independent object file
@@ -25,7 +27,13 @@ $(TARGET): main.c $(LIB_NAME)
 run: $(TARGET)
 	./$(TARGET)
 
+install: $(LIB_NAME)
+	./install.sh --prefix $(PREFIX)
+
+uninstall:
+	./install.sh --prefix $(PREFIX) --uninstall
+
 clean:
 	rm -f $(OBJ) $(LIB_NAME) $(TARGET)
 
-.PHONY: all run clean
+.PHONY: all run clean install uninstall
